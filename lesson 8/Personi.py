@@ -10,3 +10,4 @@ class Personi:
 
     def sayHi(self):
         print(f"pershendetje nga: {self.emri}")
+
