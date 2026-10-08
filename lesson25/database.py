@@ -1,9 +1,10 @@
 import sqlite3
 
-from streamlit import connection
-
+from streamlit import connection, title
 
 from models import Movie, MovieCreate
+
+
 
 
 
@@ -60,48 +61,20 @@ def read_movie(movie_id:int):
     return Movie(id=row["id"],title = row["title"],director = row["director"])
 
 
+def update_movie(movie_id:int, movie:MovieCreate) -> bool:
+    connection = create_connection()
+    cursor = connection.cursor()
+    cursor.execute("UPDATE movies SET title=?, director=? WHERE id=? ",(movie.title, movie.director, movie_id))
+    connection.commit()
+    updated = cursor.rowcount
+    connection.close()
+    return updated>0
 
 
+def delete_movie(movie_id: int) -> bool:
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    connection = create_connection()
+    cursor = connection.cursor()
+    cursor.execute("DELETE FROM movies WHERE id=?",(movie_id))
+    connection.commit()
+    deleted= cursor.rowcount
