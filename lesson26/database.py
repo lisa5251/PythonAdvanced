@@ -32,6 +32,12 @@ def create_tables():
             FOREIGN KEY (category_id) REFERENCES categories(id)
         )
     """)
-
+    cursor.execute("""
+           CREATE TABLE IF NOT EXISTS users (
+               id INTEGER PRIMARY KEY AUTOINCREMENT,
+               username TEXT NOT NULL UNIQUE,
+               password_hash TEXT NOT NULL
+           )
+       """)
     connection.commit()
     connection.close()

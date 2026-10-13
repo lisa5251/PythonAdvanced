@@ -3,6 +3,7 @@ from fastapi import FastAPI
 from database import create_tables
 from routers.categories import router as categories_router
 from routers.recipes import router as recipes_router
+from routers.auth import router as auth_router
 
 
 create_tables()
@@ -13,9 +14,9 @@ app = FastAPI(
     version="1.0.0"
 )
 
-
 app.include_router(categories_router)
 app.include_router(recipes_router)
+app.include_router(auth_router)
 
 
 @app.get("/")
