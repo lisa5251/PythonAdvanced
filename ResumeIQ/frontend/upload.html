@@ -1,0 +1,60 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Resume - ResumeIQ</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="js/config.js" defer></script>
+    <script src="js/main.js" defer></script>
+    <script src="js/upload.js" defer></script>
+</head>
+<body class="dashboard-page">
+
+<aside class="sidebar">
+    <a href="index.html" class="logo">Resume<span>IQ</span></a>
+    <p class="sidebar-label">MENU</p>
+    <a href="dashboard.html" class="sidebar-link">▦ Dashboard</a>
+    <a href="upload.html" class="sidebar-link active">＋ Upload Resume</a>
+    <div class="sidebar-bottom">
+        <a href="index.html" class="sidebar-link" id="logoutButton">↪ Logout</a>
+    </div>
+</aside>
+
+<main class="dashboard-main">
+    <header class="dashboard-header">
+        <div>
+            <span class="tag">AI RESUME ANALYSIS</span>
+            <h1>Upload Your Resume</h1>
+            <p>Upload your PDF and let ResumeIQ analyze it.</p>
+        </div>
+    </header>
+
+    <section class="upload-container">
+        <form id="uploadForm">
+            <label for="resumeFile" class="upload-box" id="dropZone">
+                <div class="upload-icon">↑</div>
+                <h2>Drop your resume here</h2>
+                <p>or click to browse your files</p>
+                <span class="file-info">PDF files only · Maximum 10 MB</span>
+                <input type="file" id="resumeFile" accept=".pdf,application/pdf" hidden required>
+            </label>
+
+            <div id="selectedFile" class="selected-file"></div>
+
+            <label for="jobDescription">Job Description (optional)</label>
+            <textarea id="jobDescription" rows="5"
+                placeholder="Paste a job description here if you want to compare your resume with a specific role..."></textarea>
+
+            <p id="uploadMessage" class="message"></p>
+
+            <button type="submit" class="btn btn-primary full-width" id="analyzeButton">
+                Analyze My Resume →
+            </button>
+        </form>
+    </section>
+</main>
+
+</body>
+</html>

@@ -1,0 +1,70 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analysis Results - ResumeIQ</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="js/config.js" defer></script>
+    <script src="js/main.js" defer></script>
+    <script src="js/dashboard.js" defer></script>
+</head>
+<body class="dashboard-page">
+
+<aside class="sidebar">
+    <a href="index.html" class="logo">Resume<span>IQ</span></a>
+    <p class="sidebar-label">MENU</p>
+    <a href="dashboard.html" class="sidebar-link">▦ Dashboard</a>
+    <a href="upload.html" class="sidebar-link">＋ Upload Resume</a>
+    <div class="sidebar-bottom">
+        <a href="index.html" class="sidebar-link" id="logoutButton">↪ Logout</a>
+    </div>
+</aside>
+
+<main class="dashboard-main">
+    <header class="dashboard-header">
+        <div>
+            <span class="tag">YOUR AI REPORT</span>
+            <h1>Resume Analysis</h1>
+            <p>Here are the results of your resume analysis.</p>
+        </div>
+        <a href="upload.html" class="btn btn-primary">Analyze Another</a>
+    </header>
+
+    <section class="results-card">
+        <div class="result-score">
+            <span>OVERALL SCORE</span>
+            <div class="score-circle" id="resultScoreCircle">
+                <div>
+                    <strong id="resultScore">--</strong>
+                    <small>/100</small>
+                </div>
+            </div>
+            <h2 id="resultTitle">Your Resume Score</h2>
+            <p id="resultSummary">Loading your analysis...</p>
+        </div>
+    </section>
+
+    <section class="results-grid">
+        <div class="dashboard-panel">
+            <h2>Strengths</h2>
+            <ul id="strengthsList"><li>Loading...</li></ul>
+        </div>
+
+        <div class="dashboard-panel">
+            <h2>Areas to Improve</h2>
+            <ul id="improvementsList"><li>Loading...</li></ul>
+        </div>
+    </section>
+
+    <section class="dashboard-panel">
+        <h2>Skills Analysis</h2>
+        <div id="skillsList">Loading skills...</div>
+    </section>
+
+    <p id="resultsMessage" class="message"></p>
+</main>
+
+</body>
+</html>

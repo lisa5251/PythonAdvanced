@@ -1,0 +1,85 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - ResumeIQ</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="js/config.js" defer></script>
+    <script src="js/main.js" defer></script>
+    <script src="js/dashboard.js" defer></script>
+</head>
+<body class="dashboard-page">
+
+<aside class="sidebar">
+    <a href="index.html" class="logo">Resume<span>IQ</span></a>
+
+    <p class="sidebar-label">MENU</p>
+    <a href="dashboard.html" class="sidebar-link active">▦ Dashboard</a>
+    <a href="upload.html" class="sidebar-link">＋ Upload Resume</a>
+
+    <div class="sidebar-bottom">
+        <a href="index.html" class="sidebar-link" id="logoutButton">↪ Logout</a>
+    </div>
+</aside>
+
+<main class="dashboard-main">
+    <header class="dashboard-header">
+        <div>
+            <span class="tag">YOUR WORKSPACE</span>
+            <h1>Dashboard</h1>
+            <p>Welcome back, <strong id="userName">User</strong>!</p>
+        </div>
+        <a href="upload.html" class="btn btn-primary">+ Analyze Resume</a>
+    </header>
+
+    <section class="stats-grid">
+        <div class="stat-card">
+            <span>Total Resumes</span>
+            <h2 id="totalResumes">--</h2>
+            <p>Uploaded resumes</p>
+        </div>
+        <div class="stat-card">
+            <span>Analyses Completed</span>
+            <h2 id="totalAnalyses">--</h2>
+            <p>Completed analyses</p>
+        </div>
+        <div class="stat-card">
+            <span>Average Score</span>
+            <h2 id="averageScore">--</h2>
+            <p>Across your resumes</p>
+        </div>
+    </section>
+
+    <section class="dashboard-panel">
+        <div class="panel-heading">
+            <div>
+                <h2>Recent Resumes</h2>
+                <p>Your latest uploaded resumes and analysis history.</p>
+            </div>
+            <a href="upload.html" class="text-link">Upload New →</a>
+        </div>
+
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Resume</th>
+                        <th>Date</th>
+                        <th>Status</th>
+                        <th>Score</th>
+                    </tr>
+                </thead>
+                <tbody id="resumeTable">
+                    <tr><td colspan="4">Loading resumes...</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <p id="dashboardMessage" class="message"></p>
+    </section>
+</main>
+
+</body>
+</html>
