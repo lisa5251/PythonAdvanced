@@ -1,0 +1,160 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>ResumeIQ | Admin Dashboard</title>
+
+    <link rel="stylesheet" href="css/admin.css">
+</head>
+
+<body>
+
+    <div class="dashboard-container">
+
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+
+            <div class="logo">
+                Resume<span>IQ</span>
+            </div>
+
+            <p class="sidebar-label">ADMINISTRATION</p>
+
+            <nav>
+                <a href="#overview" class="nav-link active">
+                    <span>▦</span> Overview
+                </a>
+
+                <a href="#users" class="nav-link">
+                    <span>♙</span> Users
+                </a>
+            </nav>
+
+            <div class="sidebar-bottom">
+                <div class="admin-info">
+                    <div class="avatar">A</div>
+                    <div>
+                        <strong>Administrator</strong>
+                        <small>Admin Account</small>
+                    </div>
+                </div>
+
+                <button id="logoutBtn" class="logout-btn">
+                    Logout
+                </button>
+            </div>
+
+        </aside>
+
+
+        <!-- MAIN CONTENT -->
+        <main class="main-content">
+
+            <header class="topbar">
+                <div>
+                    <h1>Dashboard Overview</h1>
+                    <p>Monitor your ResumeIQ platform.</p>
+                </div>
+
+                <div class="topbar-right">
+                    <span class="admin-badge">ADMIN</span>
+                </div>
+            </header>
+
+
+            <!-- STATISTICS -->
+            <section id="overview">
+
+                <div class="section-heading">
+                    <h2>Platform Statistics</h2>
+                    <p>Here's what's happening with ResumeIQ.</p>
+                </div>
+
+                <div class="stats-grid">
+
+                    <div class="stat-card">
+                        <div class="stat-icon purple">♙</div>
+                        <p>Total Users</p>
+                        <h2 id="totalUsers">--</h2>
+                        <small>Registered accounts</small>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon blue">▤</div>
+                        <p>Total Resumes</p>
+                        <h2 id="totalResumes">--</h2>
+                        <small>Uploaded resumes</small>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon orange">▣</div>
+                        <p>Total Analyses</p>
+                        <h2 id="totalAnalyses">--</h2>
+                        <small>Completed analyses</small>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon green">★</div>
+                        <p>Average Match Score</p>
+                        <h2 id="averageScore">--</h2>
+                        <small>Platform average</small>
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- USERS TABLE -->
+            <section class="users-section" id="users">
+
+                <div class="users-heading">
+                    <div>
+                        <h2>Registered Users</h2>
+                        <p>All accounts registered on ResumeIQ.</p>
+                    </div>
+                </div>
+
+                <p id="status" class="status-message">
+                    Loading users...
+                </p>
+
+                <div class="table-wrapper">
+
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>NAME</th>
+                                <th>EMAIL</th>
+                                <th>ROLE</th>
+                                <th>JOINED</th>
+                            </tr>
+                        </thead>
+
+                        <tbody id="usersTable">
+                        </tbody>
+                    </table>
+
+                </div>
+
+            </section>
+
+
+            <footer>
+                © 2026 ResumeIQ. Admin Panel.
+            </footer>
+
+        </main>
+
+    </div>
+
+
+    <script src="js/admin.js"></script>
+
+</body>
+</html>
+<script src="js/admin.js"></script>
