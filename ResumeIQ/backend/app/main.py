@@ -5,7 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.database import Base, engine
 from app import models
 
-from app.routes import auth, resumes, analysis, dashboard, admin
+from app.routes import auth, resumes, analysis, dashboard
 
 
 # Create database tables
@@ -40,7 +40,6 @@ app.include_router(auth.router)
 app.include_router(resumes.router)
 app.include_router(analysis.router)
 app.include_router(dashboard.router)
-app.include_router(admin.router)
 
 
 @app.get("/")

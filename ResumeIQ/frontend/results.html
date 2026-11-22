@@ -46,6 +46,21 @@
         </div>
     </section>
 
+    <section class="results-card job-match-card" id="jobMatchCard" hidden>
+        <div>
+            <span class="tag">JOB DESCRIPTION MATCH</span>
+            <h2><strong id="jobMatchScore">--</strong>% match</h2>
+            <p>Based on relevant terms found in the job description and resume text.</p>
+        </div>
+        <div class="match-progress"><span id="jobMatchProgress"></span></div>
+    </section>
+
+    <section class="dashboard-panel score-breakdown-panel">
+        <h2>Score Breakdown</h2>
+        <p class="panel-intro">Each section is scored against the same evidence-based 100-point rubric.</p>
+        <div id="scoreBreakdown" class="score-breakdown">Loading score details...</div>
+    </section>
+
     <section class="results-grid">
         <div class="dashboard-panel">
             <h2>Strengths</h2>
@@ -58,9 +73,27 @@
         </div>
     </section>
 
-    <section class="dashboard-panel">
-        <h2>Skills Analysis</h2>
-        <div id="skillsList">Loading skills...</div>
+    <section class="results-grid skill-analysis-grid">
+        <div class="dashboard-panel">
+            <h2>Recognized Skills in Your Resume</h2>
+            <div id="skillsList">Loading skills...</div>
+        </div>
+        <div class="dashboard-panel" id="jobSkillsPanel" hidden>
+            <h2>Job Description Skills</h2>
+            <h3>Matching skills</h3>
+            <div id="matchingSkills" class="skill-tags"></div>
+            <h3>Missing relevant skills</h3>
+            <div id="missingSkills" class="skill-tags"></div>
+            <h3>Recommended keywords</h3>
+            <div id="recommendedKeywords" class="skill-tags"></div>
+            <p class="keyword-note">Only include a recommended keyword if it honestly reflects your experience.</p>
+        </div>
+    </section>
+
+    <section class="dashboard-panel recommendations-panel">
+        <h2>AI Recommendations</h2>
+        <p id="aiNotice" class="panel-intro"></p>
+        <ul id="aiRecommendations"><li>Loading recommendations...</li></ul>
     </section>
 
     <p id="resultsMessage" class="message"></p>

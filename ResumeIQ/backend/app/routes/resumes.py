@@ -43,11 +43,11 @@ async def upload_resume(
             filename,
             content
         )
-    except Exception:
+    except ValueError as error:
         raise HTTPException(
             status_code=400,
-            detail="Unable to read resume"
-        )
+            detail=str(error)
+        ) from error
 
     if not extracted_text:
         raise HTTPException(

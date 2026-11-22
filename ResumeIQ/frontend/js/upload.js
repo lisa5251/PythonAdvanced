@@ -23,14 +23,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (
             file.type !== "application/pdf" &&
-            !file.name.toLowerCase().endsWith(".pdf")
+            file.type !== "application/vnd.openxmlformats-officedocument.wordprocessingml.document" &&
+            !file.name.toLowerCase().endsWith(".pdf") &&
+            !file.name.toLowerCase().endsWith(".docx")
         ) {
-            showMessage("Please select a PDF file.");
+            showMessage("Please select a PDF or DOCX file.");
             return false;
         }
 
-        if (file.size > 10 * 1024 * 1024) {
-            showMessage("The file must be smaller than 10 MB.");
+        if (file.size > 5 * 1024 * 1024) {
+            showMessage("The file must be no larger than 5 MB.");
             return false;
         }
 
@@ -85,41 +87,53 @@ document.addEventListener("DOMContentLoaded", () => {
         const jobDescription =
             document.getElementById("jobDescription").value.trim();
 
-        if (jobDescription) {
-            formData.append("job_description", jobDescription);
-        }
-
+        let resumeUploaded = false;
         try {
             analyzeButton.disabled = true;
             analyzeButton.textContent = "Analyzing...";
             showMessage("Uploading your resume. Please wait...");
 
-            const data = await apiRequest(API_ENDPOINTS.upload, {
+            const userId = getUserId();
+            if (!userId) {
+                throw new Error("Please log in again before uploading a resume.");
+            }
+
+            const uploadData = await apiRequest(
+                `${API_ENDPOINTS.upload}?user_id=${encodeURIComponent(userId)}`,
+                {
+                    method: "POST",
+                    body: formData
+                }
+            );
+            resumeUploaded = true;
+
+            showMessage("Resume uploaded. Building your detailed analysis...");
+            const analysisData = await apiRequest(API_ENDPOINTS.createAnalysis, {
                 method: "POST",
-                body: formData
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    resume_id: uploadData.resume_id,
+                    job_description: jobDescription
+                })
             });
 
-            const analysisId =
-                data.analysis_id ??
-                data.analysis?.id ??
-                data.id;
-
-            if (analysisId) {
-                localStorage.setItem("last_analysis_id", analysisId);
+            if (analysisData.analysis_id) {
+                localStorage.setItem("last_analysis_id", analysisData.analysis_id);
 
                 window.location.href =
-                    "results.html?id=" + encodeURIComponent(analysisId);
+                    "results.html?id=" + encodeURIComponent(analysisData.analysis_id);
             } else {
-                showMessage(
-                    "Upload completed, but no analysis ID was returned. Check your dashboard.",
-                    true
-                );
-                analyzeButton.disabled = false;
-                analyzeButton.textContent = "Analyze My Resume →";
+                throw new Error("The server did not return an analysis ID.");
             }
 
         } catch (error) {
-            showMessage(error.message);
+            showMessage(
+                resumeUploaded
+                    ? "Resume uploaded, but analysis could not be completed: " + error.message
+                    : error.message
+            );
             analyzeButton.disabled = false;
             analyzeButton.textContent = "Analyze My Resume →";
         }

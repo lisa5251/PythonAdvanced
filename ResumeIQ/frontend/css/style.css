@@ -698,6 +698,135 @@ td {
     margin-bottom: 25px;
 }
 
+.score-breakdown-panel {
+    margin-bottom: 25px;
+}
+
+.panel-intro,
+.keyword-note {
+    color: var(--muted);
+    font-size: 13px;
+    margin-top: 5px;
+}
+
+.score-breakdown {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.score-category {
+    padding: 18px;
+    border: 1px solid var(--border);
+    border-radius: 11px;
+    background: #fdfcff;
+}
+
+.score-category-heading,
+.score-category-title {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 12px;
+}
+
+.score-category-title {
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.score-category-heading strong {
+    color: var(--primary);
+    white-space: nowrap;
+}
+
+.score-category .progress {
+    display: block;
+    margin: 12px 0;
+}
+
+.score-category h4 {
+    font-size: 12px;
+    margin-top: 12px;
+}
+
+.score-category ul {
+    margin: 3px 0 0;
+    padding-left: 18px;
+}
+
+.score-category li {
+    font-size: 12px;
+    padding: 3px 0;
+}
+
+.job-match-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 30px;
+    margin-bottom: 25px;
+}
+
+.job-match-card h2 {
+    font-size: 24px;
+}
+
+.job-match-card h2 strong {
+    color: var(--primary);
+}
+
+.job-match-card p {
+    color: var(--muted);
+    font-size: 13px;
+}
+
+.match-progress {
+    flex: 1;
+    max-width: 360px;
+    height: 12px;
+    border-radius: 20px;
+    background: #eeeafb;
+    overflow: hidden;
+}
+
+.match-progress span {
+    display: block;
+    width: 0;
+    height: 100%;
+    background: var(--primary);
+    transition: width 0.3s ease;
+}
+
+.skill-analysis-grid {
+    margin-bottom: 25px;
+}
+
+.skill-analysis-grid h3 {
+    margin-top: 17px;
+    font-size: 13px;
+}
+
+.skill-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.skill-tag {
+    padding: 5px 10px;
+    border-radius: 18px;
+    background: #f0edff;
+    color: var(--primary-dark);
+    font-size: 12px;
+}
+
+.recommendations-panel {
+    margin-bottom: 25px;
+}
+
 .dashboard-panel ul {
     padding-left: 20px;
     margin-top: 15px;
@@ -786,7 +915,8 @@ td {
 
     .feature-grid,
     .stats-grid,
-    .results-grid {
+    .results-grid,
+    .score-breakdown {
         grid-template-columns: 1fr;
     }
 
@@ -849,5 +979,16 @@ td {
     .panel-heading {
         align-items: flex-start;
         flex-direction: column;
+    }
+
+    .job-match-card {
+        align-items: stretch;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .match-progress {
+        max-width: none;
+        width: 100%;
     }
 }

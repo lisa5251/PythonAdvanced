@@ -1,114 +1,96 @@
-
 document.addEventListener("DOMContentLoaded", () => {
-
-    // DASHBOARD
-
     const resumeTable = document.getElementById("resumeTable");
 
     async function loadDashboard() {
         if (!resumeTable) return;
 
         try {
-            const data = await apiRequest(API_ENDPOINTS.dashboard);
+            const userId = getUserId();
+            const data = await apiRequest(
+                `${API_ENDPOINTS.dashboard}?user_id=${encodeURIComponent(userId)}`
+            );
 
-            const userName = document.getElementById("userName");
             const totalResumes = document.getElementById("totalResumes");
             const totalAnalyses = document.getElementById("totalAnalyses");
             const averageScore = document.getElementById("averageScore");
 
-            const user = data.user || {};
-
-            if (userName) {
-                userName.textContent =
-                    user.name || user.full_name || "User";
-            }
-
-            const stats = data.stats || data;
-
-            if (totalResumes) {
-                totalResumes.textContent =
-                    stats.total_resumes ?? 0;
-            }
-
-            if (totalAnalyses) {
-                totalAnalyses.textContent =
-                    stats.total_analyses ?? 0;
-            }
-
+            if (totalResumes) totalResumes.textContent = data.total_resumes;
+            if (totalAnalyses) totalAnalyses.textContent = data.total_analyses;
             if (averageScore) {
-                averageScore.textContent =
-                    stats.average_score != null
-                    ? stats.average_score + "%"
-                    : "--";
+                averageScore.textContent = data.average_score == null
+                    ? "--"
+                    : `${data.average_score}%`;
             }
 
-            const resumes = data.resumes || data.recent_resumes || [];
-
-            resumeTable.innerHTML = "";
-
-            if (resumes.length === 0) {
-                resumeTable.innerHTML =
-                    '<tr><td colspan="4">No resumes uploaded yet. Start by uploading one!</td></tr>';
-                return;
-            }
-
-            resumes.forEach(resume => {
-                const row = document.createElement("tr");
-
-                const name = document.createElement("td");
-                name.textContent =
-                    resume.filename || resume.file_name || "Resume";
-
-                const date = document.createElement("td");
-                date.textContent = resume.created_at
-                    ? new Date(resume.created_at).toLocaleDateString()
-                    : "--";
-
-                const status = document.createElement("td");
-                const badge = document.createElement("span");
-                badge.className = "status-badge";
-                badge.textContent = resume.status || "Uploaded";
-                status.appendChild(badge);
-
-                const score = document.createElement("td");
-                score.textContent =
-                    resume.score != null ? resume.score + "/100" : "--";
-
-                row.append(name, date, status, score);
-
-                if (resume.analysis_id || resume.id) {
-                    row.style.cursor = "pointer";
-                    row.addEventListener("click", () => {
-                        const id = resume.analysis_id || resume.id;
-                        localStorage.setItem("last_analysis_id", id);
-                        window.location.href =
-                            "results.html?id=" + encodeURIComponent(id);
-                    });
-                }
-
-                resumeTable.appendChild(row);
-            });
-
+            renderRecentResumes(data.recent_resumes || []);
         } catch (error) {
-            resumeTable.innerHTML =
-                '<tr><td colspan="4">Could not load dashboard: ' +
-                escapeHTML(error.message) + '</td></tr>';
+            resumeTable.replaceChildren();
+            const row = document.createElement("tr");
+            const cell = document.createElement("td");
+            cell.colSpan = 4;
+            cell.textContent = `Could not load dashboard: ${error.message}`;
+            row.appendChild(cell);
+            resumeTable.appendChild(row);
         }
     }
 
-    // ANALYSIS RESULTS
+    function renderRecentResumes(resumes) {
+        resumeTable.replaceChildren();
+
+        if (resumes.length === 0) {
+            const row = document.createElement("tr");
+            const cell = document.createElement("td");
+            cell.colSpan = 4;
+            cell.textContent = "No resumes uploaded yet. Start by uploading one!";
+            row.appendChild(cell);
+            resumeTable.appendChild(row);
+            return;
+        }
+
+        resumes.forEach(resume => {
+            const row = document.createElement("tr");
+            const values = [
+                resume.filename || "Resume",
+                resume.created_at
+                    ? new Date(resume.created_at).toLocaleDateString()
+                    : "--",
+                resume.status || "Uploaded",
+                resume.score == null ? "--" : `${resume.score}/100`
+            ];
+
+            values.forEach(value => {
+                const cell = document.createElement("td");
+                cell.textContent = value;
+                row.appendChild(cell);
+            });
+
+            if (resume.analysis_id) {
+                row.tabIndex = 0;
+                row.setAttribute("role", "link");
+                row.style.cursor = "pointer";
+                row.addEventListener("click", () => openAnalysis(resume.analysis_id));
+                row.addEventListener("keydown", event => {
+                    if (event.key === "Enter" || event.key === " ") {
+                        event.preventDefault();
+                        openAnalysis(resume.analysis_id);
+                    }
+                });
+            }
+            resumeTable.appendChild(row);
+        });
+    }
+
+    function openAnalysis(analysisId) {
+        localStorage.setItem("last_analysis_id", analysisId);
+        window.location.href = `results.html?id=${encodeURIComponent(analysisId)}`;
+    }
 
     async function loadResults() {
         const scoreElement = document.getElementById("resultScore");
-
         if (!scoreElement) return;
 
-        const params = new URLSearchParams(window.location.search);
-
-        const analysisId =
-            params.get("id") ||
-            localStorage.getItem("last_analysis_id");
-
+        const analysisId = new URLSearchParams(window.location.search).get("id")
+            || localStorage.getItem("last_analysis_id");
         if (!analysisId) {
             document.getElementById("resultsMessage").textContent =
                 "No analysis selected. Please upload a resume first.";
@@ -116,140 +98,161 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         try {
-            const data = await apiRequest(
-                API_ENDPOINTS.analysis + "/" +
-                encodeURIComponent(analysisId)
+            const analysis = await apiRequest(
+                `${API_ENDPOINTS.analysis}/${encodeURIComponent(analysisId)}`
             );
-
-            const analysis = data.analysis || data;
-
-            const score =
-                analysis.score ??
-                analysis.total_score ??
-                analysis.overall_score ??
-                0;
-
-            scoreElement.textContent = score;
-
-            const circle = document.getElementById("resultScoreCircle");
-
-            if (circle) {
-                const safeScore = Math.max(0, Math.min(100, Number(score)));
-                circle.style.background =
-                    `conic-gradient(var(--primary) ${safeScore}%, #eeeafb 0)`;
-            }
-
-            document.getElementById("resultTitle").textContent =
-                score >= 80 ? "Excellent Resume!" :
-                score >= 60 ? "Good Progress!" :
-                "Room for Improvement";
-
-            document.getElementById("resultSummary").textContent =
-                analysis.summary ||
-                analysis.feedback ||
-                "Your resume analysis is complete.";
-
-            renderList(
-                "strengthsList",
-                analysis.strengths || []
-            );
-
-            renderList(
-                "improvementsList",
-                analysis.improvements ||
-                analysis.suggestions || []
-            );
-
-            renderSkills(analysis.skills || []);
-
+            renderResults(analysis);
         } catch (error) {
             document.getElementById("resultsMessage").textContent =
-                "Could not load results: " + error.message;
+                `Could not load results: ${error.message}`;
         }
     }
 
-    function renderList(elementId, items) {
+    function renderResults(analysis) {
+        const score = Number(analysis.overall_score ?? analysis.match_score ?? 0);
+        document.getElementById("resultScore").textContent = score;
+
+        const scoreCircle = document.getElementById("resultScoreCircle");
+        const safeScore = Math.max(0, Math.min(100, score));
+        scoreCircle.style.background =
+            `conic-gradient(var(--primary) ${safeScore}%, #eeeafb 0)`;
+
+        document.getElementById("resultTitle").textContent =
+            score >= 80 ? "Excellent Resume!" :
+            score >= 60 ? "Good Progress!" :
+            "Room for Improvement";
+        document.getElementById("resultSummary").textContent =
+            analysis.summary || "Your resume analysis is complete.";
+
+        renderBreakdown(analysis.score_breakdown || []);
+        renderList("strengthsList", analysis.strengths || []);
+        renderList(
+            "improvementsList",
+            analysis.areas_to_improve || analysis.improvements || []
+        );
+        renderSkillTags("skillsList", analysis.skills_found || []);
+
+        const aiNotice = document.getElementById("aiNotice");
+        aiNotice.textContent = analysis.ai_recommendations_available
+            ? "Suggestions are generated from the resume text and should be checked for accuracy."
+            : (analysis.ai_notice || "AI-generated recommendations are unavailable for this analysis.");
+        renderList(
+            "aiRecommendations",
+            analysis.ai_recommendations || [],
+            analysis.ai_recommendations_available
+                ? "No additional AI recommendations were returned."
+                : "No AI recommendations are available for this analysis. See the message above; your score and rubric-based suggestions are still available."
+        );
+
+        if (analysis.has_job_description && analysis.job_match_percentage != null) {
+            document.getElementById("jobMatchCard").hidden = false;
+            document.getElementById("jobSkillsPanel").hidden = false;
+            const matchScore = Math.max(
+                0,
+                Math.min(100, Number(analysis.job_match_percentage))
+            );
+            document.getElementById("jobMatchScore").textContent = matchScore;
+            document.getElementById("jobMatchProgress").style.width = `${matchScore}%`;
+            renderSkillTags("matchingSkills", analysis.matching_skills || []);
+            renderSkillTags("missingSkills", analysis.missing_relevant_skills || []);
+            renderSkillTags("recommendedKeywords", analysis.recommended_keywords || []);
+        }
+    }
+
+    function renderBreakdown(categories) {
+        const container = document.getElementById("scoreBreakdown");
+        container.replaceChildren();
+
+        categories.forEach(category => {
+            const card = document.createElement("article");
+            card.className = "score-category";
+
+            const heading = document.createElement("div");
+            heading.className = "score-category-heading";
+            const title = document.createElement("span");
+            title.className = "score-category-title";
+            title.textContent = category.category;
+            const points = document.createElement("strong");
+            points.textContent = `${category.points}/${category.max_points}`;
+            heading.append(title, points);
+            card.appendChild(heading);
+
+            const progress = document.createElement("div");
+            progress.className = "progress";
+            const fill = document.createElement("span");
+            const percent = category.max_points
+                ? (category.points / category.max_points) * 100
+                : 0;
+            fill.style.width = `${percent}%`;
+            progress.appendChild(fill);
+            card.appendChild(progress);
+
+            appendCategoryDetails(card, "What you did well", category.strengths);
+            appendCategoryDetails(card, "Needs improvement", category.needs_improvement);
+            appendCategoryDetails(card, "Suggestions", category.suggestions);
+            container.appendChild(card);
+        });
+
+        if (categories.length === 0) {
+            container.textContent = "Detailed scoring information is unavailable.";
+        }
+    }
+
+    function appendCategoryDetails(container, headingText, items) {
+        const heading = document.createElement("h4");
+        heading.textContent = headingText;
+        const list = document.createElement("ul");
+        const details = items && items.length
+            ? items
+            : [headingText === "Needs improvement"
+                ? "No major gaps were identified in this category."
+                : "No additional suggestions for this category."];
+        details.forEach(item => {
+            const entry = document.createElement("li");
+            entry.textContent = item;
+            list.appendChild(entry);
+        });
+        container.append(heading, list);
+    }
+
+    function renderList(elementId, items, emptyMessage = "No items to show.") {
         const element = document.getElementById(elementId);
-
-        if (!element) return;
-
         element.replaceChildren();
 
-        if (!Array.isArray(items) || items.length === 0) {
-            const li = document.createElement("li");
-            li.textContent = "No information available.";
-            element.appendChild(li);
+        if (items.length === 0) {
+            const empty = document.createElement("li");
+            empty.textContent = emptyMessage;
+            element.appendChild(empty);
             return;
         }
 
         items.forEach(item => {
-            const li = document.createElement("li");
-            li.textContent = typeof item === "string"
-                ? item
-                : item.description || item.name || JSON.stringify(item);
-
-            element.appendChild(li);
+            const entry = document.createElement("li");
+            entry.textContent = item;
+            element.appendChild(entry);
         });
     }
 
-    function renderSkills(skills) {
-        const element = document.getElementById("skillsList");
-
-        if (!element) return;
-
+    function renderSkillTags(elementId, skills) {
+        const element = document.getElementById(elementId);
         element.replaceChildren();
 
-        if (!Array.isArray(skills) || skills.length === 0) {
-            element.textContent = "No skills information available.";
+        if (skills.length === 0) {
+            element.textContent = "None identified in the extracted text.";
             return;
         }
 
         skills.forEach(skill => {
-            const name = typeof skill === "string"
-                ? skill
-                : skill.name || skill.skill || "Skill";
-
-            const percentage = typeof skill === "object"
-                ? Math.max(0, Math.min(100, Number(skill.score ?? skill.percentage ?? 75)))
-                : 75;
-
-            const item = document.createElement("div");
-            item.className = "skill-item";
-
-            const heading = document.createElement("div");
-            heading.className = "skill-heading";
-
-            const label = document.createElement("span");
-            label.textContent = name;
-
-            const value = document.createElement("strong");
-            value.textContent = percentage + "%";
-
-            heading.append(label, value);
-
-            const bar = document.createElement("div");
-            bar.className = "skill-bar";
-
-            const fill = document.createElement("span");
-            fill.style.width = percentage + "%";
-
-            bar.appendChild(fill);
-            item.append(heading, bar);
-
-            element.appendChild(item);
+            const tag = document.createElement("span");
+            tag.className = "skill-tag";
+            tag.textContent = skill;
+            element.appendChild(tag);
         });
-    }
-
-    function escapeHTML(value) {
-        return String(value).replace(/[&<>"']/g, char => ({
-            "&": "&amp;",
-            "<": "&lt;",
-            ">": "&gt;",
-            '"': "&quot;",
-            "'": "&#039;"
-        })[char]);
     }
 
     loadDashboard();
     loadResults();
+    window.addEventListener("pageshow", event => {
+        if (event.persisted) loadDashboard();
+    });
 });

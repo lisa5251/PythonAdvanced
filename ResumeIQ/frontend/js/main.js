@@ -28,6 +28,7 @@ document.addEventListener("DOMContentLoaded", () => {
             event.preventDefault();
 
             localStorage.removeItem("user_id");
+            localStorage.removeItem("access_token");
             localStorage.removeItem("last_analysis_id");
             localStorage.removeItem("last_resume_id");
 

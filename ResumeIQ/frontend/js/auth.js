@@ -36,11 +36,12 @@ document.addEventListener("DOMContentLoaded", () => {
                     })
                 });
 
-                if (!data.user_id) {
-                    throw new Error("User ID was not returned by the server.");
+                if (!data.user_id || !data.access_token) {
+                    throw new Error("The server did not return a valid login session.");
                 }
 
                 localStorage.setItem("user_id", data.user_id);
+                localStorage.setItem("access_token", data.access_token);
 
                 showMessage("Login successful!", true);
 
